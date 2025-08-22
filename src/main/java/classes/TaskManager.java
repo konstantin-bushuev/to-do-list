@@ -1,15 +1,21 @@
 package classes;
 
-import java.util.ArrayList;
 import java.util.List;
 
 public class TaskManager {
     private List<Task> tasks;
-    int nextId;
+    private int nextId;
+    private StorageManager storageManager;
 
     public TaskManager() {
-        this.tasks = new ArrayList<>();
-        this.nextId = 1;
+        storageManager = new StorageManager();
+        this.tasks = storageManager.loadFromFile();
+
+        if(tasks.isEmpty()) {
+            this.nextId = 1;
+        } else {
+            this.nextId = tasks.getLast().getId() + 1;
+        }
     }
 
     public void add(String description) {
@@ -17,6 +23,8 @@ public class TaskManager {
         tasks.add(task);
         System.out.println("Задача добавлена");
         nextId++;
+
+        storageManager.saveToFile(tasks);
     }
 
     public void list() {
@@ -37,6 +45,8 @@ public class TaskManager {
         } else {
             System.out.println("Задача с таким номером не найдена");
         }
+
+        storageManager.saveToFile(tasks);
     }
 
     public void remove(int id) {
@@ -47,6 +57,8 @@ public class TaskManager {
         } else {
             System.out.println("Задача с таким номером не найдена");
         }
+
+        storageManager.saveToFile(tasks);
     }
 
     private Task findById(int id) {
